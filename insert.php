@@ -12,7 +12,7 @@ $sentence = $_POST['sentence'];
 $source = $_POST['source'];
 
 //２. 単語数カウントの処理
-// A.　すべて小文字
+// A.　すべて小文字に
 $smallSentence=strtolower($sentence);
 // echo $smallsentence;
 
@@ -30,6 +30,10 @@ $smallSentence=str_replace(".", "", $smallSentence);
 $smallSentence=str_replace(",", "", $smallSentence);
 $smallSentence=str_replace("“", "", $smallSentence);
 $smallSentence=str_replace("”", "", $smallSentence);
+$smallSentence=str_replace("ts ", "t ", $smallSentence);
+$smallSentence=str_replace("rs ", "r ", $smallSentence);
+
+$smallSentence=str_replace("ns ", "n ", $smallSentence);
 
 
 
@@ -37,7 +41,7 @@ $smallSentence=str_replace("”", "", $smallSentence);
 $wordarray = explode(" ",$smallSentence);
 // print_r($array);
 
-// D.配列内の同じ要素をカウント
+// D.配列内の同じ要素をカウント。関数が勝手に連想配列を作ってくれる。
 $countarray = array_count_values($wordarray);
 // print_r($countarray);
 
@@ -66,6 +70,7 @@ $pdo->exec('TRUNCATE TABLE tangocount');
 
 // 1. SQL文を用意
 // 上記の単語と出現回数をSQLに入れていく
+// 出現回数順での出力も見据えて、配列のままDBには入れず、それぞれDBに格納。。
 foreach($countarray as $key => $value){
 $stmt = $pdo->prepare("INSERT INTO
                         tangocount(id, word, count, source, date)

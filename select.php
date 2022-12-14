@@ -14,8 +14,11 @@ try {
 }
 
 //２．データ取得SQL作成
+
+// 出現回数の降順で出力
 $stmt = $pdo->prepare("SELECT * FROM tangocount ORDER BY count DESC;");
 $status = $stmt->execute();
+
 
 //３．データ表示
 $view="";
@@ -28,10 +31,14 @@ if ($status==false) {
     //Selectデータの数だけ自動でループしてくれる
     //FETCH_ASSOC=http://php.net/manual/ja/pdostatement.fetch.php
     
-    
-    while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
-      $view .= '<tr>' . '<td>' . $result['id'] . '</td>' .'<td>' .  h($result['word']) .'</td>' .  '<td>'  . h($result['count']) . '</td>' . '</tr>';
-  }
+    // SQLのデータをテーブル形式で出力。単語出現回数の累計を追加。
+    $int=0;
+    $acCount=0;
+    while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {        
+        $acCount = $acCount+h($result['count']);
+      $view .= '<tr>' . '<td>' . $int . '</td>'. '<td>' . $result['id'] . '</td>' .'<td>' .  h($result['word']) .'</td>' .  '<td>'  . h($result['count']) . '</td>'  . '<td>'  .$acCount . '</td>' . '</tr>';
+        $int++;
+    }
 }
 ?>
 
@@ -72,9 +79,12 @@ if ($status==false) {
         <div class="container jumbotron">
             <table border="1">
                 <tr>
+                    <th>No</th>
                     <th>id</th>
                     <th>word</th>
                     <th>count</th>
+                    <th>累計count</th>
+
                 </tr>
                 <?= $view ?>
             </table>
